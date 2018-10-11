@@ -1,3 +1,6 @@
+env
+data
 imdb_clas
 imdb_lm
 aclImdb
+__pycache__

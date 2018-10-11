@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../')
+sys.path.append('fastai')
 from fastai.text import *
 import html
 import os
@@ -64,7 +64,7 @@ def get_texts(df, n_lbls=1):
     
     # pull the full FILEPATH for each text
     # BOS is a flag to indicate when a new text is starting
-    texts = f'\n{BOS} {FLD} 1 ' + df[n_lbls].astype(str)
+    texts = f'\n{BOS} {FLD} 2 ' + df[n_lbls].astype(str)
     
     # Sometimes, text has title, or other sub-sections. We will record all of these
     for i in range(n_lbls+1, len(df.columns)): texts += f' {FLD} {i-n_lbls} ' + df[i].astype(str)
@@ -523,14 +523,15 @@ md = ModelData(PATH, trn_dl, val_dl)
 
 layers=[em_sz*3, 50, c]
 
-drops=[dps[4], 0.1]
-
-dropouti=(dps[0], wdrop=dps[1], dropoute=dps[2], dropouth=dps[3])
 # setup our dropout rates
 dps = np.array([0.4,0.5,0.05,0.3,0.4])*0.5
 m = get_rnn_classifer(bptt, 20*70, c, vs, emb_sz=em_sz, n_hid=nh, n_layers=nl, pad_token=1,
           layers=[em_sz*3, 50, c], drops=[dps[4], 0.1],
           dropouti=dps[0], wdrop=dps[1], dropoute=dps[2], dropouth=dps[3])
+drops=[dps[4], 0.1]
+
+# dropouti=(dps[0], wdrop=dps[1], dropoute=dps[2], dropouth=dps[3])
+
 
 opt_fn = partial(optim.Adam, betas=(0.7, 0.99))
 
@@ -551,7 +552,7 @@ lrs = np.array([lr/(lrm**4), lr/(lrm**3), lr/(lrm**2), lr/lrm, lr])
 lrs=np.array([1e-4,1e-4,1e-4,1e-3,1e-2])
 wd = 1e-7
 wd = 0
-learn.load_encoder('lm2_enc')
+learn.load_encoder('lm1_enc')
 learn.freeze_to(-1)
 
 # find the optimal learning rate
